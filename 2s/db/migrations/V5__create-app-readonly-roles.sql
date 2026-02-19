@@ -1,0 +1,4 @@
+CREATE ROLE app LOGIN PASSWORD 'c0ntr0l';
+CREATE ROLE readonly LOGIN PASSWORD 'v1si0n';
+
+GRANT CONNECT ON DATABASE course_db TO app, readonly;
