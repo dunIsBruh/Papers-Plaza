@@ -6,28 +6,31 @@ services:
     container_name: pg_course
     environment:
       POSTGRES_DB: course_db
-      POSTGRES_USER: postgres 17
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: gr00sha207
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   flyway:
     image: flyway/flyway
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     command: 
       - "migrate"
-      - "-baselineOnMigrate=true"
     volumes:
       - ./db/migrations:/flyway/sql
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/course_db
-      FLYWAY_USER: postgres 17
+      FLYWAY_USER: postgres
       FLYWAY_PASSWORD: gr00sha207
-      FLYWAY_BASELINE_VERSION: 1
-      FLYWAY_BASELINE_DESCRIPTION: "Initial baseline"
       FLYWAY_SCHEMAS: public 
 
   pgadmin:
