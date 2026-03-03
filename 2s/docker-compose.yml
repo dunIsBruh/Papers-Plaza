@@ -1,17 +1,70 @@
-version: "3.9"
+# version: "3.9"
+
+# services:
+#   postgres:
+#     image: postgres:15
+#     container_name: pg_course
+#     environment:
+#       POSTGRES_DB: course_db
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: gr00sha207
+#     ports:
+#       - "5433:5432"
+#     volumes:
+#       - pg_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   flyway:
+#     image: flyway/flyway
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     command: 
+#       - "migrate"
+#     volumes:
+#       - ./db/migrations:/flyway/sql
+#     environment:
+#       FLYWAY_URL: jdbc:postgresql://postgres:5432/course_db
+#       FLYWAY_USER: postgres
+#       FLYWAY_PASSWORD: gr00sha207
+#       FLYWAY_SCHEMAS: public 
+
+#   pgadmin:
+#     image: dpage/pgadmin4
+#     container_name: pgadmin
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: daniargarafiev6@gmail.com
+#       PGADMIN_DEFAULT_PASSWORD: gr00sha207
+#     ports:
+#       - "5050:80"
+#     depends_on:
+#       - postgres
+
+# volumes:
+#   pg_data:
+
+version: '3.8'
 
 services:
   postgres:
     image: postgres:15
     container_name: pg_course
     environment:
-      POSTGRES_DB: course_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: gr00sha207
+      POSTGRES_DB: course_db
     ports:
       - "5433:5432"
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -44,5 +97,37 @@ services:
     depends_on:
       - postgres
 
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:gr00sha207@postgres:5432/course_db?sslmode=disable"
+    volumes:
+      - ./queries.yaml:/queries.yaml
+    command:
+      - "--extend.query-path=/queries.yaml"
+      - "--collector.stat_statements"
+      - "--collector.stat_statements.query_length=300"
+      - "--collector.stat_statements.limit=500"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - postgres_exporter
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 volumes:
-  pg_data:
+  pgdata:
