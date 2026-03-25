@@ -1,0 +1,58 @@
+services:
+  pg_publisher:
+    image: postgres:15
+    container_name: pg_publisher
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: course_db
+    ports:
+      - "5441:5432"
+    command: >
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=10
+      -c max_wal_senders=10
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg_subscriber:
+    image: postgres:15
+    container_name: pg_subscriber
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: course_db
+    ports:
+      - "5442:5432"
+    # Для подписчика wal_level=logical не обязателен, но полезен для каскадной репликации
+    command: >
+      postgres
+      -c max_logical_replication_workers=10
+      -c max_sync_workers_per_subscription=2
+
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway
+    depends_on:
+      pg_publisher:
+        condition: service_healthy
+    command:
+      - "migrate"
+    volumes:
+      - ./db/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://pg_publisher:5432/course_db
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: pass
+      FLYWAY_SCHEMAS: public
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      FLYWAY_CLEAN_DISABLED: "false"
+
+
+networks:
+  default:
+    name: logic_repl_network

@@ -24,3 +24,22 @@ SELECT
     1
 FROM identity.biometry b
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO items.luggage
+SELECT FROM generate_series(1,250000) l;
+
+INSERT INTO criminal.casetype (description)
+VALUES
+    ('Terrorism'),
+    ('Smuggling'),
+    ('Fraud'),
+    ('Cybercrime'),
+    ('Human Trafficking'),
+    ('Money Laundering'),
+    ('Drug Trafficking'),
+    ('Illegal Arms Trade'),
+    ('Banking Fraud'),
+    ('Identity Theft'),
+    ('Cyber Espionage');
+
+
