@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/2s/db/migrations/V4__create-analytics-schema.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/2s/seed.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/seed1.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V1__init-base-tables-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V2__change-base-tables-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V3__add-logging-table-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V4__create-analytics-schema-sub.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V5.1__grant-in-public-to-roles-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V5.2__grant-in-analytics=to-roles-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/db/migrations/V5__create-app-readonly-roles-sub.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_6/sub_schema.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_7/analytics_tables_changes.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_7/logic_sectitioning/root_on_publisher.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/2s/work_7/seed2.sql" dialect="PostgreSQL" />
   </component>
 </project>

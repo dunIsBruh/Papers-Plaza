@@ -36,7 +36,7 @@ services:
 
   flyway:
     image: flyway/flyway:latest
-    container_name: flyway
+    container_name: flyway_logic_db
     depends_on:
       pg_publisher:
         condition: service_healthy

@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  shard1:
+    image: postgres:15
+    container_name: shard_server_1
+    environment:
+      POSTGRES_DB: shard_db_1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5423:5432"
+    command: >
+      postgres -c shared_preload_libraries=postgres_fdw
+               -c max_connections=100
+
+  shard2:
+    image: postgres:15
+    container_name: shard_server_2
+    environment:
+      POSTGRES_DB: shard_db_2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5424:5432"
+    command: >
+      postgres -c shared_preload_libraries=postgres_fdw
+               -c max_connections=100
+
+  router:
+    image: postgres:15
+    container_name: shard_server_router
+    environment:
+      POSTGRES_DB: router_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5422:5432"
+    depends_on:
+      - shard1
+      - shard2
+    command: >
+      postgres -c shared_preload_libraries=postgres_fdw
+               -c max_connections=100
