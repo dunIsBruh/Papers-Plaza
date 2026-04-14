@@ -181,6 +181,9 @@ VACUUM FULL
 
 
 1. Опишите, что происходит с DELETE и UPDATE в сессии B в двух экспериментах.
+
+
+
 2. Объясните, чем FOR KEY SHARE отличается от FOR NO KEY UPDATE по смыслу и по силе блокировки:
 
 FOR NO KEY UPDATE более строгая блокировка строки по сравнению с FOR KEY SHARE.
