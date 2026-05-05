@@ -1,0 +1,52 @@
+services:
+  cassandra1:
+    image: cassandra:latest
+    container_name: cassandra1
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=HomeworkCluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=1G # Ограничиваем память
+      - HEAP_NEWSIZE=256M  # Ограничиваем память
+    healthcheck:
+      test: ["CMD-SHELL", "nodetool status"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  cassandra2:
+    image: cassandra:latest
+    container_name: cassandra2
+    environment:
+      - CASSANDRA_CLUSTER_NAME=HomeworkCluster
+      - CASSANDRA_SEEDS=cassandra1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=256M
+    depends_on:
+      cassandra1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nodetool status"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  cassandra3:
+    image: cassandra:latest
+    container_name: cassandra3
+    environment:
+      - CASSANDRA_CLUSTER_NAME=HomeworkCluster
+      - CASSANDRA_SEEDS=cassandra1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=256M
+    depends_on:
+      cassandra1:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "nodetool status" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
